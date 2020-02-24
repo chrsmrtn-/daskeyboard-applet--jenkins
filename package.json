@@ -1,0 +1,134 @@
+{
+  "name": "daskeyboard-applet--jenkins",
+  "displayName": "Jenkins Pipeline",
+  "version": "0.0.3",
+  "description": "Displays status of Jenkins pipeline.",
+  "longDescription": "Monitor the status of your Jenkins pipeline on your Q keyboard!",
+  "officialProductName": "Jenkins Pipeline",
+  "appUrl": "",
+  "isSingleton": false,
+  "videoUrl": "",
+  "icon": "assets/icon.png",
+  "image": "assets/q-jenkins.png",
+  "publisher": "chrsmrtn",
+  "authorName": "chrsmrtn",
+  "authorUrl": "https://github.com/chrsmrtn-",
+  "issuesUrl": "https://github.com/chrsmrtn-/daskeyboard-applet--jenkins/issues",
+  "homePageUrl": "https://github.com/chrsmrtn-/daskeyboard-applet--jenkins",
+  "developerRepoUrl": "https://github.com/chrsmrtn-/daskeyboard-applet--jenkins",
+  "licenseUrl": "https://opensource.org/licenses/MIT",
+  "changelogUrl": "CHANGELOG.md",
+  "license": "MIT",
+  "readMeUrl": "README.md",
+  "readMeEndUserUrl": "README_ENDUSER.md",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "engines": {
+    "das-keyboard-q": "3.1.0"
+  },
+  "dependencies": {
+    "daskeyboard-applet": "^2.11.4",
+    "request": "^2.34",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "qConfig": {
+    "geometry": {
+      "width": 1,
+      "height": 1,
+      "defaults": {
+        "origin": {
+          "x": 0,
+          "y": 1
+        }
+      }
+    },
+    "questions": [
+      {
+        "key": "jenkinsUrl",
+        "label": "Url of your jenkins server including port",
+        "help": "This is the jenkins server url where the pipeline is that we want to monitor",
+        "required": true,
+        "order": 1,
+        "controlType": "textbox"
+      },
+      {
+        "key": "username",
+        "label": "Username of user used to check jenkins",
+        "help": "This is the jenkins user that will be logged in with to check the pipeline",
+        "required": true,
+        "order": 2,
+        "controlType": "textbox"
+      },
+      {
+        "key": "token",
+        "label": "User token used to check jenkins",
+        "help": "This is the jenkins token for the user",
+        "required": true,
+        "order": 3,
+        "controlType": "textbox"
+      },
+      {
+        "key": "pipeline",
+        "label": "Choose a pipeline to monitor",
+        "help": "Select a pipeline from the list",
+        "required": true,
+        "order": 4,
+        "controlType": "textbox"
+      },
+      {
+        "key": "successColor",
+        "label": "Choose color for SUCCESS",
+        "help": "Color when build was successful",
+        "order": 5,
+        "value": "#00FF00",
+        "controlType": "color"
+      },
+      {
+        "key": "successEffect",
+        "label": "Choose a SUCCESS effect",
+        "help": "Effect when build was successful",
+        "order": 6,
+        "value": "SET_COLOR",
+        "controlType": "effect"
+      },
+      {
+        "key": "failureColor",
+        "label": "Choose a FAILURE color",
+        "help": "Color when build was a failure",
+        "order": 7,
+        "value": "#FF0000",
+        "controlType": "color"
+      },
+      {
+        "key": "failureEffect",
+        "label": "Choose a FAILURE effect",
+        "help": "Effect when build was a failure",
+        "order": 8,
+        "value": "SET_COLOR",
+        "controlType": "effect"
+      },
+      {
+        "key": "buildingColor",
+        "label": "Choose a BUILDING color",
+        "help": "Color when building",
+        "order": 9,
+        "value": "#0000FF",
+        "controlType": "color"
+      },
+      {
+        "key": "buildingEffect",
+        "label": "Choose a BUILDING effect",
+        "help": "Effect when build is building",
+        "order": 10,
+        "value": "SET_COLOR",
+        "controlType": "effect"
+      }
+    ]
+  }
+}
