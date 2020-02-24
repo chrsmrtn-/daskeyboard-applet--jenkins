@@ -42,14 +42,6 @@ class JenkinsPipelineChecker extends q.DesktopApp
         });
     }
 
-    buildUrl(config)
-    {
-        let parts = config.jenkinsUrl.split('//')
-        parts[1] = config.username + ':' + config.token + '@' + parts[1];
-        let url = parts.join("//");
-        return url;
-    }
-
     getColor(body, config)
     {
         let color = config.failureColor;
