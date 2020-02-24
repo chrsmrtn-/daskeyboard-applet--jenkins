@@ -15,10 +15,13 @@ class JenkinsPipelineChecker extends q.DesktopApp
     }
 
     async run() {
-        let url = this.buildUrl(this.config) + '/job/' + this.config.pipeline + '/lastBuild/api/json';
+        let url = this.config.jenkinsUrl + '/job/' + this.config.pipeline + '/lastBuild/api/json';
 
         return request.get({
             url: url,
+            headers: {
+                'Authorization': 'Basic ' + Buffer.from(`${this.config.username}:${this.config.token}`).toString('base64')
+            },
             json: true
         }).then((body) => {
             let color = this.getColor(body, this.config);
