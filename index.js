@@ -8,15 +8,16 @@ const logger = q.logger;
 
 class JenkinsPipelineChecker extends q.DesktopApp
 {
-    constructor() {
+    constructor(requestParam = request) {
         super();
         this.pollingInterval = 3000;
+        this._request = requestParam;
     }
 
     async run() {
         let url = this.config.jenkinsUrl + '/job/' + this.config.pipeline + '/lastBuild/api/json';
 
-        return request.get({
+        return this._request.get({
             url: url,
             headers: {
                 'Authorization': 'Basic ' + Buffer.from(`${this.config.username}:${this.config.token}`).toString('base64')
