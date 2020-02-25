@@ -42,7 +42,7 @@ describe('JenkinsPipelineChecker', function () {
     });
 
     describe('#getEffect()', () => {
-        it('should return configured color for successful build', () => {
+        it('should return configured effect for successful build', () => {
             let sut = buildApp();
             let lastBuild = new LastBuild({
                 building: false,
