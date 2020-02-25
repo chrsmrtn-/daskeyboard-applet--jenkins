@@ -1,4 +1,5 @@
 const request = require('request-promise');
+const { LastBuild }  = require('./lastBuild')
 
 // Library to send signal to Q keyboards
 const q = require('daskeyboard-applet');
@@ -24,33 +25,20 @@ class JenkinsPipelineChecker extends q.DesktopApp
             },
             json: true
         }).then((body) => {
-            let color = this.getColor(body, this.config);
-            let effect = this.getEffect(body, this.config);
-            let message = this.config.pipeline;
-            message += this.getStatusMessage(body);
-
-            let signal = new q.Signal({
-                points: [[new q.Point(color, effect)]],
-                name: "Jenkins",
-                message: message,
-                link: {
-                url: body.url,
-                label: 'Show in Jenkins',
-                }
-            });
-            return signal;
+            let lastBuild = new LastBuild(body);
+            return this.getSignal(lastBuild);
         });
     }
 
-    getColor(body, config)
+    getColor(lastBuild, config)
     {
         let color = config.failureColor;
 
-        if (body.building === true)
+        if (lastBuild.building === true)
         {
             color = config.buildingColor;
         }
-        else if(body.result == 'SUCCESS')
+        else if(lastBuild.result === 'SUCCESS')
         {
             color = this.config.successColor;
         }
@@ -58,14 +46,14 @@ class JenkinsPipelineChecker extends q.DesktopApp
         return color;
     }
 
-    getEffect(body, config)
+    getEffect(lastBuild, config)
     {
         let effect = config.failureEffect;
         
-        if (body.building === true){
+        if (lastBuild.building === true){
             effect = config.buildingEffect;
         }
-        else if(body.result == 'SUCCESS')
+        else if(lastBuild.result === 'SUCCESS')
         {
             effect = this.config.successEffect;
         }
@@ -73,20 +61,38 @@ class JenkinsPipelineChecker extends q.DesktopApp
         return effect;
     }
 
-    getStatusMessage(body)
+    getStatusMessage(lastBuild)
     {
         let status = ' failed!';
         
-        if (body.building === true)
+        if (lastBuild.building === true)
         {
             status = ' building...';
         }
-        else if(body.result == 'SUCCESS')
+        else if(lastBuild.result === 'SUCCESS')
         {
             status = ' passed!';
         }
 
         return status;
+    }
+
+    getSignal(lastBuild) {
+        let color = this.getColor(lastBuild, this.config);
+        let effect = this.getEffect(lastBuild, this.config);
+        let message = this.config.pipeline;
+        message += this.getStatusMessage(lastBuild);
+
+        let signal = new q.Signal({
+            points: [[new q.Point(color, effect)]],
+            name: "Jenkins",
+            message: message,
+            link: {
+            url: lastBuild.url,
+            label: 'Show in Jenkins',
+            }
+        });
+        return signal;
     }
     
 }
