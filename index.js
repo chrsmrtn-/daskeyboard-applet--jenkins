@@ -10,9 +10,7 @@ class JenkinsPipelineChecker extends q.DesktopApp
 {
     constructor() {
         super();
-        // run every 3000 ms
         this.pollingInterval = 3000;
-        logger.info('Jenkins ready to go!');
     }
 
     async run() {
@@ -88,8 +86,8 @@ class JenkinsPipelineChecker extends q.DesktopApp
             name: "Jenkins",
             message: message,
             link: {
-            url: lastBuild.url,
-            label: 'Show in Jenkins',
+                url: lastBuild.url,
+                label: 'Show in Jenkins',
             }
         });
         return signal;
