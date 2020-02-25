@@ -90,6 +90,14 @@ describe('JenkinsPipelineChecker', function () {
                 });
             });
         });
+
+        it('should return the appropriate signal link for a pipeline', async () => {
+            return buildApp( { building: false, result: 'SUCCESS', url: 'url to pipeline' }).then(async sut => {
+                return sut.run().then((signal) => {
+                    assert.equal(signal.link.url, 'url to pipeline', "Did not get the expected successful effect");
+                });
+            });
+        });
     });
 });
 
