@@ -27,7 +27,7 @@ describe('JenkinsPipelineChecker', function () {
             assert.equal(signal.points[0][0].color, testConfiguration.successColor, "Did not get the expected successful color.");
         });
 
-        it('should return the appropriate signal effect for a failed pipeline', async () => {
+        it('should return the appropriate signal effect for a successful pipeline', async () => {
             let signal = await sut.run();
             assert.equal(signal.points[0][0].effect, testConfiguration.successEffect, "Did not get the expected successful effect");
         });
