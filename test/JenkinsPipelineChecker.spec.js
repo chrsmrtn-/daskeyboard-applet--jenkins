@@ -23,65 +23,75 @@ describe('JenkinsPipelineChecker', function () {
         });
 
         it('should return the appropriate signal color for a successful pipeline', async () => {
-            let signal = await sut.run();
-            assert.equal(signal.points[0][0].color, testConfiguration.successColor, "Did not get the expected successful color.");
+            return sut.run().then((signal) => {
+                assert.equal(signal.points[0][0].color, testConfiguration.successColor, "Did not get the expected successful color.");
+            });
         });
 
         it('should return the appropriate signal effect for a successful pipeline', async () => {
-            let signal = await sut.run();
-            assert.equal(signal.points[0][0].effect, testConfiguration.successEffect, "Did not get the expected successful effect");
+            return sut.run().then((signal) => {
+                assert.equal(signal.points[0][0].effect, testConfiguration.successEffect, "Did not get the expected successful effect");
+            });
         });
 
         it('should return the appropriate signal message for a successful pipeline', async () => {
-            let signal = await sut.run();
-            assert.ok(signal.message.includes('passed'), "Message didn't indicate if the pipeline passed");
-            assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+            return sut.run().then((signal) => {
+                assert.ok(signal.message.includes('passed'), "Message didn't indicate if the pipeline passed");
+                assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+            });
         });
 
         it('should return the appropriate signal color for a failed pipeline', async () => {
             jenkinsApiResponse.result = 'FAILURE';
-            let signal = await sut.run();
-            assert.equal(signal.points[0][0].color, testConfiguration.failureColor, "Did not get the expected failure color.");
+            return sut.run().then((signal) => {
+                assert.equal(signal.points[0][0].color, testConfiguration.failureColor, "Did not get the expected failure color.");
+            });
         });
 
         it('should return the appropriate signal effect for a failed pipeline', async () => {
             jenkinsApiResponse.result = 'FAILURE';
-            let signal = await sut.run();
-            assert.equal(signal.points[0][0].effect, testConfiguration.failureEffect, "Did not get the expected failure effect");
+            return sut.run().then((signal) => {
+                assert.equal(signal.points[0][0].effect, testConfiguration.failureEffect, "Did not get the expected failure effect");
+            });
         });
 
         it('should return the appropriate signal message for a failed pipeline', async () => {
             jenkinsApiResponse.result = 'FAILURE';
-            let signal = await sut.run();
-            assert.ok(signal.message.includes('failed'), "Message didn't indicate if the pipeline failed");
-            assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+            return sut.run().then((signal) => {
+                assert.ok(signal.message.includes('failed'), "Message didn't indicate if the pipeline failed");
+                assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+            });
         });
 
         it('should return the appropriate signal color for a building pipeline', async () => {
             jenkinsApiResponse.building = true;
             jenkinsApiResponse.result = null;
-            let signal = await sut.run();
-            assert.equal(signal.points[0][0].color, testConfiguration.buildingColor, "Did not get the expected building color.");
+            return sut.run().then((signal) => {
+                assert.equal(signal.points[0][0].color, testConfiguration.buildingColor, "Did not get the expected building color.");
+            });
         });
 
         it('should return the appropriate signal effect for a building pipeline', async () => {
             jenkinsApiResponse.building = true;
             jenkinsApiResponse.result = null;
-            let signal = await sut.run();
-            assert.equal(signal.points[0][0].effect, testConfiguration.failureEffect, "Did not get the expected building effect");
+            return sut.run().then((signal) => {
+                assert.equal(signal.points[0][0].effect, testConfiguration.failureEffect, "Did not get the expected building effect");
+            });
         });
 
         it('should return the appropriate signal message for a building pipeline', async () => {
             jenkinsApiResponse.building = true;
             jenkinsApiResponse.result = null;
-            let signal = await sut.run();
-            assert.ok(signal.message.includes('building'), "Message didn't indicate if the pipeline is building");
-            assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+            return sut.run().then((signal) => {
+                assert.ok(signal.message.includes('building'), "Message didn't indicate if the pipeline is building");
+                assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+            });
         });
 
         it('should return the appropriate signal link for a pipeline', async () => {
-            let signal = await sut.run();
-            assert.equal(signal.link.url, 'url to pipeline', "Did not get the expected successful effect");
+            return sut.run().then((signal) => {
+                assert.equal(signal.link.url, 'url to pipeline', "Did not get the expected successful effect");
+            });
         });
     });
 });
