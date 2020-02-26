@@ -1,7 +1,7 @@
 {
   "name": "daskeyboard-applet--jenkins",
   "displayName": "Jenkins Pipeline",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Displays status of Jenkins pipeline.",
   "longDescription": "Monitor the status of your Jenkins pipeline on your Q keyboard!",
   "officialProductName": "Jenkins Pipeline",
@@ -110,7 +110,7 @@
         "label": "Choose a FAILURE effect",
         "help": "Effect when build was a failure",
         "order": 8,
-        "value": "SET_COLOR",
+        "value": "BLINK",
         "controlType": "effect"
       },
       {
@@ -126,6 +126,22 @@
         "label": "Choose a BUILDING effect",
         "help": "Effect when build is building",
         "order": 10,
+        "value": "BREATHE",
+        "controlType": "effect"
+      },
+      {
+        "key": "abortedColor",
+        "label": "Choose an ABORTED color",
+        "help": "Color when the build aborted",
+        "order": 11,
+        "value": "#C0C0C0",
+        "controlType": "color"
+      },
+      {
+        "key": "abortedEffect",
+        "label": "Choose an ABORTED effect",
+        "help": "Effect when build aborted",
+        "order": 12,
         "value": "SET_COLOR",
         "controlType": "effect"
       }

@@ -11,7 +11,9 @@ const testConfiguration = {
     failureColor: "#FF0000",
     failureEffect: "SET_COLOR",
     buildingColor: "#0000FF",
-    buildingEffect: "SET_COLOR"
+    buildingEffect: "SET_COLOR",
+    abortedColor: "#C0C0C0",
+    abortedEffect: "SET_COLOR"
 };
 
 describe('JenkinsPipelineChecker', function () {
@@ -63,6 +65,28 @@ describe('JenkinsPipelineChecker', function () {
             });
         });
 
+        it('should return the appropriate signal color for a aborted pipeline', async () => {
+            jenkinsApiResponse.result = "ABORTED";
+            return sut.run().then((signal) => {
+                assert.equal(signal.points[0][0].color, testConfiguration.abortedColor, "Did not get the expected aborted color.");
+            });
+        });
+
+        it('should return the appropriate signal effect for a aborted pipeline', async () => {
+            jenkinsApiResponse.result = "ABORTED";
+            return sut.run().then((signal) => {
+                assert.equal(signal.points[0][0].effect, testConfiguration.abortedEffect, "Did not get the expected aborted effect");
+            });
+        });
+
+        it('should return the appropriate signal message for a aborted pipeline', async () => {
+            jenkinsApiResponse.result = "ABORTED";
+            return sut.run().then((signal) => {
+                assert.ok(signal.message.includes('aborted'), "Message didn't indicate if the pipeline aborted");
+                assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+            });
+        });
+
         it('should return the appropriate signal color for a building pipeline', async () => {
             jenkinsApiResponse.building = true;
             jenkinsApiResponse.result = null;
@@ -102,6 +126,7 @@ function buildApp(response, rejection) {
     }}
     let app = new JenkinsPipelineChecker(fakeRequest);
     app.config = testConfiguration;
+    app.applyConfig();
 
     return app;
 }

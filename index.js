@@ -12,6 +12,29 @@ class JenkinsPipelineChecker extends q.DesktopApp
         super();
         this.pollingInterval = 3000;
         this._request = requestParam;
+
+        this.MessagesForBuild = {
+            SUCCESS: " passed!",
+            FAILURE: " failed!",
+            BUILDING: " building...",
+            ABORTED: " aborted."
+        }
+    }
+
+    async applyConfig() {
+        this.ColorsForBuild = {
+            SUCCESS: this.config.successColor,
+            FAILURE: this.config.failureColor,
+            BUILDING: this.config.buildingColor,
+            ABORTED: this.config.abortedColor
+        }
+
+        this.EffectsForBuild = {
+            SUCCESS: this.config.successEffect,
+            FAILURE: this.config.failureEffect,
+            BUILDING: this.config.buildingEffect,
+            ABORTED: this.config.abortedEffect
+        }
     }
 
     async run() {
@@ -31,46 +54,41 @@ class JenkinsPipelineChecker extends q.DesktopApp
 
     getColor(lastBuild, config)
     {
-        let color = config.failureColor;
+        let color;
+        let lastBuildStatus = this.convertToStatus(lastBuild);
 
-        if (lastBuild.building === true)
-        {
-            color = config.buildingColor;
+        if (Object.keys(this.ColorsForBuild).includes(lastBuildStatus)) {
+            color = this.ColorsForBuild[lastBuildStatus];
+        } else {
+            color = `Build state of ${lastBuild.result} not recognized`;
         }
-        else if(lastBuild.result === 'SUCCESS')
-        {
-            color = this.config.successColor;
-        }
-        
+
         return color;
     }
 
     getEffect(lastBuild, config)
     {
-        let effect = config.failureEffect;
-        
-        if (lastBuild.building === true){
-            effect = config.buildingEffect;
+        let effect;
+        let lastBuildStatus = this.convertToStatus(lastBuild);
+
+        if (Object.keys(this.EffectsForBuild).includes(lastBuildStatus)) {
+            effect = this.EffectsForBuild[lastBuildStatus];
+        } else {
+            effect = `Build state of ${lastBuild.result} not recognized`;
         }
-        else if(lastBuild.result === 'SUCCESS')
-        {
-            effect = this.config.successEffect;
-        }
-        
+
         return effect;
     }
 
     getStatusMessage(lastBuild)
     {
-        let status = ' failed!';
-        
-        if (lastBuild.building === true)
-        {
-            status = ' building...';
-        }
-        else if(lastBuild.result === 'SUCCESS')
-        {
-            status = ' passed!';
+        let status;
+        let lastBuildStatus = this.convertToStatus(lastBuild);
+
+        if (Object.keys(this.MessagesForBuild).includes(lastBuildStatus)) {
+            status = this.MessagesForBuild[lastBuildStatus];
+        } else {
+            status = `Build state of ${lastBuild.result} not recognized`;
         }
 
         return status;
@@ -92,6 +110,14 @@ class JenkinsPipelineChecker extends q.DesktopApp
             }
         });
         return signal;
+    }
+
+    convertToStatus(lastBuild) {
+        let lastBuildStatus = lastBuild.result;
+        if (lastBuild.building) {
+            lastBuildStatus = "BUILDING";
+        }
+        return lastBuildStatus;
     }
     
 }
