@@ -1,5 +1,5 @@
 const request = require('request-promise');
-const { LastBuild }  = require('./lastBuild')
+const { LastBuild }  = require('./lastBuild');
 
 // Library to send signal to Q keyboards
 const q = require('daskeyboard-applet');
@@ -12,6 +12,9 @@ class JenkinsPipelineChecker extends q.DesktopApp
         super();
         this.pollingInterval = 3000;
         this._request = requestParam;
+        
+        this.jenkinsUrl;
+        this.userToken;
 
         this.MessagesForBuild = {
             SUCCESS: " passed!",
@@ -35,21 +38,53 @@ class JenkinsPipelineChecker extends q.DesktopApp
             BUILDING: this.config.buildingEffect,
             ABORTED: this.config.abortedEffect
         }
+
+        if (this.authorization.apiKey.includes("@")) {
+            let parts = this.authorization.apiKey.split("@");
+            this.jenkinsUrl = parts[1];
+            this.userToken = parts[0];
+        } else {
+            logger.error("Unable to parse connection string. Missing @ separator");
+        }
     }
 
     async run() {
-        let url = this.config.jenkinsUrl + '/job/' + this.config.pipeline + '/lastBuild/api/json';
+        let url = this.jenkinsUrl + '/job/' + this.config.pipeline + '/lastBuild/api/json';
 
         return this._request.get({
             url: url,
             headers: {
-                'Authorization': 'Basic ' + Buffer.from(`${this.config.username}:${this.config.token}`).toString('base64')
+                'Authorization': 'Basic ' + Buffer.from(`${this.userToken}`).toString('base64')
             },
             json: true
         }).then((body) => {
             let lastBuild = new LastBuild(body);
             return this.getSignal(lastBuild);
         });
+    }
+
+    async options(fieldId) {
+        if (fieldId === 'pipeline') {
+            let url = this.jenkinsUrl + '/api/json';
+    
+            return this._request.get({
+                url: url,
+                headers: {
+                    'Authorization': 'Basic ' + Buffer.from(`${this.userToken}`).toString('base64')
+                },
+                json: true
+            }).then(body => {
+                return this.buildJobs(body.jobs);
+            }).catch(error => {
+                logger.error(`Caught error when loading jobs: ${error}`);
+                return [
+                    {
+                        key: '1',
+                        value: `had error: ${error}`
+                    }
+                ];
+            });
+        }
     }
 
     getColor(lastBuild, config)
@@ -118,6 +153,17 @@ class JenkinsPipelineChecker extends q.DesktopApp
             lastBuildStatus = "BUILDING";
         }
         return lastBuildStatus;
+    }
+
+    buildJobs(jobs) {
+        let options = [];
+        jobs.forEach(job => {
+            options.push({
+                key: job.name,
+                value: job.name
+            })
+        });
+        return options;
     }
     
 }

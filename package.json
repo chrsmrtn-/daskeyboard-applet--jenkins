@@ -1,7 +1,7 @@
 {
   "name": "daskeyboard-applet--jenkins",
   "displayName": "Jenkins Pipeline",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Displays status of Jenkins pipeline.",
   "longDescription": "Monitor the status of your Jenkins pipeline on your Q keyboard!",
   "officialProductName": "Jenkins Pipeline",
@@ -48,44 +48,26 @@
         }
       }
     },
+    "authorization": {
+      "type": "apiKey",
+      "hint": "username:token@jenkinsserver to connect to jenkins server"
+    },
     "questions": [
-      {
-        "key": "jenkinsUrl",
-        "label": "Url of your jenkins server including port",
-        "help": "This is the jenkins server url where the pipeline is that we want to monitor",
-        "required": true,
-        "order": 1,
-        "controlType": "textbox"
-      },
-      {
-        "key": "username",
-        "label": "Username of user used to check jenkins",
-        "help": "This is the jenkins user that will be logged in with to check the pipeline",
-        "required": true,
-        "order": 2,
-        "controlType": "textbox"
-      },
-      {
-        "key": "token",
-        "label": "User token used to check jenkins",
-        "help": "This is the jenkins token for the user",
-        "required": true,
-        "order": 3,
-        "controlType": "textbox"
-      },
       {
         "key": "pipeline",
         "label": "Choose a pipeline to monitor",
         "help": "Select a pipeline from the list",
         "required": true,
-        "order": 4,
-        "controlType": "textbox"
+        "order": 1,
+        "controlType": "dropdown",
+        "dynamic": true,
+        "options": []
       },
       {
         "key": "successColor",
         "label": "Choose color for SUCCESS",
         "help": "Color when build was successful",
-        "order": 5,
+        "order": 2,
         "value": "#00FF00",
         "controlType": "color"
       },
@@ -93,7 +75,7 @@
         "key": "successEffect",
         "label": "Choose a SUCCESS effect",
         "help": "Effect when build was successful",
-        "order": 6,
+        "order": 3,
         "value": "SET_COLOR",
         "controlType": "effect"
       },
@@ -101,7 +83,7 @@
         "key": "failureColor",
         "label": "Choose a FAILURE color",
         "help": "Color when build was a failure",
-        "order": 7,
+        "order": 4,
         "value": "#FF0000",
         "controlType": "color"
       },
@@ -109,7 +91,7 @@
         "key": "failureEffect",
         "label": "Choose a FAILURE effect",
         "help": "Effect when build was a failure",
-        "order": 8,
+        "order": 5,
         "value": "BLINK",
         "controlType": "effect"
       },
@@ -117,7 +99,7 @@
         "key": "buildingColor",
         "label": "Choose a BUILDING color",
         "help": "Color when building",
-        "order": 9,
+        "order": 6,
         "value": "#0000FF",
         "controlType": "color"
       },
@@ -125,7 +107,7 @@
         "key": "buildingEffect",
         "label": "Choose a BUILDING effect",
         "help": "Effect when build is building",
-        "order": 10,
+        "order": 7,
         "value": "BREATHE",
         "controlType": "effect"
       },
@@ -133,7 +115,7 @@
         "key": "abortedColor",
         "label": "Choose an ABORTED color",
         "help": "Color when the build aborted",
-        "order": 11,
+        "order": 8,
         "value": "#C0C0C0",
         "controlType": "color"
       },
@@ -141,7 +123,7 @@
         "key": "abortedEffect",
         "label": "Choose an ABORTED effect",
         "help": "Effect when build aborted",
-        "order": 12,
+        "order": 9,
         "value": "SET_COLOR",
         "controlType": "effect"
       }
