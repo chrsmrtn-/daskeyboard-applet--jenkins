@@ -38,7 +38,7 @@ class JenkinsPipelineChecker extends q.DesktopApp
             BUILDING: this.config.buildingEffect,
             ABORTED: this.config.abortedEffect
         }
-        
+
         try {
             this.parseApiKeyValue();
         } catch (ex) {
@@ -162,6 +162,10 @@ class JenkinsPipelineChecker extends q.DesktopApp
     }
 
     parseApiKeyValue(){
+        if (this.authorization.apiKey == undefined) {
+            return;
+        }
+        
         if (!this.authorization.apiKey.startsWith('http')) {
             throw new Errow('Unable to parse connection string. Connection needs to use protocol of "http" or "https".');
         }
