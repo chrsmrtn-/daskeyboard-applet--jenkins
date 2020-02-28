@@ -50,7 +50,7 @@
     },
     "authorization": {
       "type": "apiKey",
-      "hint": "username:token@jenkinsserver to connect to jenkins server"
+      "hint": "https://username:token@jenkins.company.com to connect to jenkins server"
     },
     "questions": [
       {

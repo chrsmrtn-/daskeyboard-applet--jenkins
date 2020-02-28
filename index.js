@@ -39,13 +39,7 @@ class JenkinsPipelineChecker extends q.DesktopApp
             ABORTED: this.config.abortedEffect
         }
 
-        if (this.authorization.apiKey.includes("@")) {
-            let parts = this.authorization.apiKey.split("@");
-            this.jenkinsUrl = parts[1];
-            this.userToken = parts[0];
-        } else {
-            logger.error("Unable to parse connection string. Missing @ separator");
-        }
+        this.parseApiKeyValue();
     }
 
     async run() {
@@ -77,12 +71,7 @@ class JenkinsPipelineChecker extends q.DesktopApp
                 return this.buildJobs(body.jobs);
             }).catch(error => {
                 logger.error(`Caught error when loading jobs: ${error}`);
-                return [
-                    {
-                        key: '1',
-                        value: `had error: ${error}`
-                    }
-                ];
+                return [ ];
             });
         }
     }
@@ -144,6 +133,7 @@ class JenkinsPipelineChecker extends q.DesktopApp
                 label: 'Show in Jenkins',
             }
         });
+
         return signal;
     }
 
@@ -164,6 +154,24 @@ class JenkinsPipelineChecker extends q.DesktopApp
             })
         });
         return options;
+    }
+
+    parseApiKeyValue(){
+        if (!this.authorization.apiKey.startsWith('http')) {
+            logger.error('Unable to parse connection string. Connection needs to use protocol of "http" or "https".');
+            return;
+        }
+
+        let urlParts = this.authorization.apiKey.split('//');
+        let protocol = urlParts[0];
+        if (!urlParts[1].includes('@')) {
+            logger.error('Unable to parse connection string. Missing @ separator.');
+            return;
+        }
+
+        let parts = urlParts[1].split('@');
+        this.jenkinsUrl = protocol + '//' + parts[1];
+        this.userToken = parts[0];
     }
     
 }
