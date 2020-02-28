@@ -38,8 +38,13 @@ class JenkinsPipelineChecker extends q.DesktopApp
             BUILDING: this.config.buildingEffect,
             ABORTED: this.config.abortedEffect
         }
-
-        this.parseApiKeyValue();
+        
+        try {
+            this.parseApiKeyValue();
+        } catch (ex) {
+            logger.error(ex.message);
+        }
+        
     }
 
     async run() {
@@ -158,15 +163,13 @@ class JenkinsPipelineChecker extends q.DesktopApp
 
     parseApiKeyValue(){
         if (!this.authorization.apiKey.startsWith('http')) {
-            logger.error('Unable to parse connection string. Connection needs to use protocol of "http" or "https".');
-            return;
+            throw new Errow('Unable to parse connection string. Connection needs to use protocol of "http" or "https".');
         }
 
         let urlParts = this.authorization.apiKey.split('//');
         let protocol = urlParts[0];
         if (!urlParts[1].includes('@')) {
-            logger.error('Unable to parse connection string. Missing @ separator.');
-            return;
+            throw new Error('Unable to parse connection string. Missing @ separator.');
         }
 
         let parts = urlParts[1].split('@');
