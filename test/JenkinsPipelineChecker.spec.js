@@ -2,58 +2,62 @@ const assert = require('assert');
 const { JenkinsPipelineChecker } = require('../index');
 
 const testConfiguration = {
-    jenkinsUrl: 'jenkinsServer',
-    username: 'username',
-    token: 'token',
-    pipeline: 'pipeline',
-    successColor: "#00FF00",
-    successEffect: "SET_COLOR",
-    failureColor: "#FF0000",
-    failureEffect: "SET_COLOR",
-    buildingColor: "#0000FF",
-    buildingEffect: "SET_COLOR",
-    abortedColor: "#C0C0C0",
-    abortedEffect: "SET_COLOR"
+	authorization: {
+		apiKey: 'http://1:1@host'
+	},
+	applet: {
+		user: {
+			pipeline: 'pipeline',
+			successColor: '#00FF00',
+			successEffect: 'SET_COLOR',
+			failureColor: '#FF0000',
+			failureEffect: 'SET_COLOR',
+			buildingColor: '#0000FF',
+			buildingEffect: 'SET_COLOR',
+			abortedColor: '#C0C0C0',
+			abortedEffect: 'SET_COLOR'
+		}
+	}
 };
 
 describe('JenkinsPipelineChecker', function () {
     let jenkinsApiResponse = { building: false, result: 'SUCCESS', url: 'url to pipeline' };
     let sut;
     describe('#run()', () => {
-        before(function () {
+        this.beforeAll(function () {
             sut = buildApp(jenkinsApiResponse);
         });
 
         it('should return the appropriate signal color for a successful pipeline', async () => {
             return sut.run().then((signal) => {
-                assert.equal(signal.points[0][0].color, testConfiguration.successColor, "Did not get the expected successful color.");
+                assert.equal(signal.points[0][0].color, testConfiguration.applet.user.successColor, "Did not get the expected successful color.");
             });
         });
 
         it('should return the appropriate signal effect for a successful pipeline', async () => {
             return sut.run().then((signal) => {
-                assert.equal(signal.points[0][0].effect, testConfiguration.successEffect, "Did not get the expected successful effect");
+                assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.successEffect, "Did not get the expected successful effect");
             });
         });
 
         it('should return the appropriate signal message for a successful pipeline', async () => {
             return sut.run().then((signal) => {
                 assert.ok(signal.message.includes('passed'), "Message didn't indicate if the pipeline passed");
-                assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+                assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), "Message didn't include pipeline name");
             });
         });
 
         it('should return the appropriate signal color for a failed pipeline', async () => {
             jenkinsApiResponse.result = 'FAILURE';
             return sut.run().then((signal) => {
-                assert.equal(signal.points[0][0].color, testConfiguration.failureColor, "Did not get the expected failure color.");
+                assert.equal(signal.points[0][0].color, testConfiguration.applet.user.failureColor, "Did not get the expected failure color.");
             });
         });
 
         it('should return the appropriate signal effect for a failed pipeline', async () => {
             jenkinsApiResponse.result = 'FAILURE';
             return sut.run().then((signal) => {
-                assert.equal(signal.points[0][0].effect, testConfiguration.failureEffect, "Did not get the expected failure effect");
+                assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.failureEffect, "Did not get the expected failure effect");
             });
         });
 
@@ -61,21 +65,21 @@ describe('JenkinsPipelineChecker', function () {
             jenkinsApiResponse.result = 'FAILURE';
             return sut.run().then((signal) => {
                 assert.ok(signal.message.includes('failed'), "Message didn't indicate if the pipeline failed");
-                assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+                assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), "Message didn't include pipeline name");
             });
         });
 
         it('should return the appropriate signal color for a aborted pipeline', async () => {
             jenkinsApiResponse.result = "ABORTED";
             return sut.run().then((signal) => {
-                assert.equal(signal.points[0][0].color, testConfiguration.abortedColor, "Did not get the expected aborted color.");
+                assert.equal(signal.points[0][0].color, testConfiguration.applet.user.abortedColor, "Did not get the expected aborted color.");
             });
         });
 
         it('should return the appropriate signal effect for a aborted pipeline', async () => {
             jenkinsApiResponse.result = "ABORTED";
             return sut.run().then((signal) => {
-                assert.equal(signal.points[0][0].effect, testConfiguration.abortedEffect, "Did not get the expected aborted effect");
+                assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.abortedEffect, "Did not get the expected aborted effect");
             });
         });
 
@@ -83,7 +87,7 @@ describe('JenkinsPipelineChecker', function () {
             jenkinsApiResponse.result = "ABORTED";
             return sut.run().then((signal) => {
                 assert.ok(signal.message.includes('aborted'), "Message didn't indicate if the pipeline aborted");
-                assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+                assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), "Message didn't include pipeline name");
             });
         });
 
@@ -91,7 +95,7 @@ describe('JenkinsPipelineChecker', function () {
             jenkinsApiResponse.building = true;
             jenkinsApiResponse.result = null;
             return sut.run().then((signal) => {
-                assert.equal(signal.points[0][0].color, testConfiguration.buildingColor, "Did not get the expected building color.");
+                assert.equal(signal.points[0][0].color, testConfiguration.applet.user.buildingColor, "Did not get the expected building color.");
             });
         });
 
@@ -99,7 +103,7 @@ describe('JenkinsPipelineChecker', function () {
             jenkinsApiResponse.building = true;
             jenkinsApiResponse.result = null;
             return sut.run().then((signal) => {
-                assert.equal(signal.points[0][0].effect, testConfiguration.failureEffect, "Did not get the expected building effect");
+                assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.failureEffect, "Did not get the expected building effect");
             });
         });
 
@@ -108,7 +112,7 @@ describe('JenkinsPipelineChecker', function () {
             jenkinsApiResponse.result = null;
             return sut.run().then((signal) => {
                 assert.ok(signal.message.includes('building'), "Message didn't indicate if the pipeline is building");
-                assert.ok(signal.message.includes(testConfiguration.pipeline), "Message didn't include pipeline name");
+                assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), "Message didn't include pipeline name");
             });
         });
 
@@ -116,6 +120,14 @@ describe('JenkinsPipelineChecker', function () {
             return sut.run().then((signal) => {
                 assert.equal(signal.link.url, 'url to pipeline', "Did not get the expected successful effect");
             });
+        });
+
+        it('should properly parse user token from a valid key value', () => {
+            assert.equal(sut.userToken, '1:1');
+        });
+
+        it('should properly parse server url from a valid key value', () => {
+            assert.equal(sut.jenkinsUrl, 'http://host');
         });
     });
 });
@@ -125,7 +137,7 @@ function buildApp(response, rejection) {
         return buildResponsePromise(response, rejection);
     }}
     let app = new JenkinsPipelineChecker(fakeRequest);
-    app.config = testConfiguration;
+    app.processConfig(testConfiguration);
     app.applyConfig();
 
     return app;
