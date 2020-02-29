@@ -21,17 +21,10 @@ const testConfiguration = {
   },
 };
 
-function buildResponsePromise(response, rejection) {
-  let responsePromise;
-  if (response) {
-    responsePromise = new Promise((resolve, reject) => {
-      resolve(response);
-    });
-  } else {
-    responsePromise = new Promise((resolve, reject) => {
-      reject(rejection);
-    });
-  }
+function buildResponsePromise(response) {
+  const responsePromise = new Promise((resolve) => {
+    resolve(response);
+  });
   return responsePromise;
 }
 
