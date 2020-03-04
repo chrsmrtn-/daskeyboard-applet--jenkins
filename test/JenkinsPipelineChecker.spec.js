@@ -77,7 +77,6 @@ describe('JenkinsPipelineChecker', () => {
 
       const signal = await sut.run();
       assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.successEffect, 'Did not get the expected successful effect.');
-
     });
 
     it('should return the appropriate signal message for a successful pipeline', async () => {
