@@ -60,15 +60,15 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     }).catch((error) => {
       logger.error(`Error while getting job status. ${error.message}`);
 
-      if (!`${error.message}`.includes('getaddrinfo')) {
-        return new q.Signal({
-          errors: [
-            `Error while getting job status. Error detail: ${error}`,
-          ],
-        });
+      if (`${error.message}`.includes('getaddrinfo')) {
+        return null;
       }
 
-      return null;
+      return new q.Signal({
+        errors: [
+          `Error while getting job status. Error detail: ${error}`,
+        ],
+      });
     });
   }
 
