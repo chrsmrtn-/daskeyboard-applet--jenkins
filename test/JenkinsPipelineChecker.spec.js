@@ -55,6 +55,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal color for a successful pipeline', async () => {
+      sut._lastResult = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
       sut.run().then((signal) => {
@@ -62,77 +63,88 @@ describe('JenkinsPipelineChecker', () => {
       });
     });
 
-    it('should return the appropriate signal effect for a successful pipeline', async () => {
+    it('should return the appropriate null signal for unchanged pipeline status', async () => {
+      sut._lastResult = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.successEffect, 'Did not get the expected successful effect.');
-      });
+      await sut.run();
+      const signal = await sut.run();
+
+      assert.equal(null, signal, 'Did not get the expected null signal.');
+    });
+
+    it('should return the appropriate signal effect for a successful pipeline', async () => {
+      sut._lastResult = null;
+      fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
+
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.successEffect, 'Did not get the expected successful effect.');
     });
 
     it('should return the appropriate signal message for a successful pipeline', async () => {
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.ok(signal.message.includes('passed'), 'Message did not indicate if the pipeline passed');
-        assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
-      });
+      const signal = await sut.run();
+
+      assert.ok(signal.message.includes('passed'), 'Message did not indicate if the pipeline passed');
+      assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
     });
 
     it('should return the appropriate signal color for a failed pipeline', async () => {
       jenkinsApiResponse.result = 'FAILURE';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal.points[0][0].color, testConfiguration.applet.user.failureColor, 'Did not get the expected failure color.');
-      });
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].color, testConfiguration.applet.user.failureColor, 'Did not get the expected failure color.');
     });
 
     it('should return the appropriate signal effect for a failed pipeline', async () => {
       jenkinsApiResponse.result = 'FAILURE';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.failureEffect, 'Did not get the expected failure effect.');
-      });
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.failureEffect, 'Did not get the expected failure effect.');
     });
 
     it('should return the appropriate signal message for a failed pipeline', async () => {
       jenkinsApiResponse.result = 'FAILURE';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.ok(signal.message.includes('failed'), 'Message did not indicate if the pipeline failed');
-        assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
-      });
+      const signal = await sut.run();
+
+      assert.ok(signal.message.includes('failed'), 'Message did not indicate if the pipeline failed');
+      assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
     });
 
     it('should return the appropriate signal color for a aborted pipeline', async () => {
       jenkinsApiResponse.result = 'ABORTED';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal.points[0][0].color, testConfiguration.applet.user.abortedColor, 'Did not get the expected aborted color.');
-      });
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].color, testConfiguration.applet.user.abortedColor, 'Did not get the expected aborted color.');
     });
 
     it('should return the appropriate signal effect for a aborted pipeline', async () => {
       jenkinsApiResponse.result = 'ABORTED';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.abortedEffect, 'Did not get the expected aborted effect.');
-      });
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.abortedEffect, 'Did not get the expected aborted effect.');
     });
 
     it('should return the appropriate signal message for a aborted pipeline', async () => {
       jenkinsApiResponse.result = 'ABORTED';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.ok(signal.message.includes('aborted'), 'Message did not indicate if the pipeline aborted');
-        assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
-      });
+      const signal = await sut.run();
+
+      assert.ok(signal.message.includes('aborted'), 'Message did not indicate if the pipeline aborted');
+      assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
     });
 
     it('should return the appropriate signal color for a building pipeline', async () => {
@@ -140,9 +152,9 @@ describe('JenkinsPipelineChecker', () => {
       jenkinsApiResponse.result = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal.points[0][0].color, testConfiguration.applet.user.buildingColor, 'Did not get the expected building color.');
-      });
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].color, testConfiguration.applet.user.buildingColor, 'Did not get the expected building color.');
     });
 
     it('should return the appropriate signal effect for a building pipeline', async () => {
@@ -150,9 +162,9 @@ describe('JenkinsPipelineChecker', () => {
       jenkinsApiResponse.result = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.failureEffect, 'Did not get the expected building effect.');
-      });
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.failureEffect, 'Did not get the expected building effect.');
     });
 
     it('should return the appropriate signal message for a building pipeline', async () => {
@@ -160,36 +172,36 @@ describe('JenkinsPipelineChecker', () => {
       jenkinsApiResponse.result = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.ok(signal.message.includes('building'), 'Message did not indicate if the pipeline is building');
-        assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
-      });
+      const signal = await sut.run();
+
+      assert.ok(signal.message.includes('building'), 'Message did not indicate if the pipeline is building');
+      assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
     });
 
     it('should return the appropriate signal link for a pipeline', async () => {
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal.link.url, 'url to pipeline', 'Did not get the expected successful effect.');
-      });
+      const signal = await sut.run();
+
+      assert.equal(signal.link.url, 'url to pipeline', 'Did not get the expected successful effect.');
     });
 
     it('should return the appropriate signal for promise reject on get job status', async () => {
       const error = new Error('99 problems and this error is one of them');
       fakeRequest.get = function tGet() { return buildResponsePromise(null, error); };
 
-      sut.run().then((signal) => {
-        assert.ok(signal.errors[0].includes(error.message), 'Did not get the expected error message in error signal.');
-      });
+      const signal = await sut.run();
+
+      assert.ok(signal.errors[0].includes(error.message), 'Did not get the expected error message in error signal.');
     });
 
     it('should return the appropriate null for promise reject on get job status related to networking issues', async () => {
       const error = new Error('getaddrinfo');
       fakeRequest.get = function tGet() { return buildResponsePromise(null, error); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal, null, 'Did not get the expected error message in error signal.');
-      });
+      const signal = await sut.run();
+
+      assert.equal(signal, null, 'Did not get the expected error message in error signal.');
     });
 
     it('should properly parse user token from a valid key value', () => {
