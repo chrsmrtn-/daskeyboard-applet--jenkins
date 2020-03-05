@@ -55,6 +55,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal color for a successful pipeline', async () => {
+      sut._lastResult = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
       sut.run().then((signal) => {
@@ -62,15 +63,24 @@ describe('JenkinsPipelineChecker', () => {
       });
     });
 
+    it('should return the appropriate null signal for unchanged pipeline status', async () => {
+      sut._lastResult = null;
+      fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
+      await sut.run();
+      const signal = await sut.run();
+      assert.equal(null, signal, 'Did not get the expected null signal.');
+    });
+
     it('should return the appropriate signal effect for a successful pipeline', async () => {
+      sut._lastResult = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
-      sut.run().then((signal) => {
-        assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.successEffect, 'Did not get the expected successful effect.');
-      });
+      const signal = await sut.run();
+      assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.successEffect, 'Did not get the expected successful effect.');
     });
 
     it('should return the appropriate signal message for a successful pipeline', async () => {
+      sut._lastResult = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
       sut.run().then((signal) => {
@@ -80,6 +90,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal color for a failed pipeline', async () => {
+      sut._lastResult = null;
       jenkinsApiResponse.result = 'FAILURE';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
@@ -89,6 +100,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal effect for a failed pipeline', async () => {
+      sut._lastResult = null;
       jenkinsApiResponse.result = 'FAILURE';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
@@ -98,6 +110,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal message for a failed pipeline', async () => {
+      sut._lastResult = null;
       jenkinsApiResponse.result = 'FAILURE';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
@@ -108,6 +121,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal color for a aborted pipeline', async () => {
+      sut._lastResult = null;
       jenkinsApiResponse.result = 'ABORTED';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
@@ -117,6 +131,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal effect for a aborted pipeline', async () => {
+      sut._lastResult = null;
       jenkinsApiResponse.result = 'ABORTED';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
@@ -126,6 +141,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal message for a aborted pipeline', async () => {
+      sut._lastResult = null;
       jenkinsApiResponse.result = 'ABORTED';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
@@ -136,6 +152,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal color for a building pipeline', async () => {
+      sut._lastResult = null;
       jenkinsApiResponse.building = true;
       jenkinsApiResponse.result = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
@@ -146,6 +163,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal effect for a building pipeline', async () => {
+      sut._lastResult = null;
       jenkinsApiResponse.building = true;
       jenkinsApiResponse.result = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
@@ -156,6 +174,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal message for a building pipeline', async () => {
+      sut._lastResult = null;
       jenkinsApiResponse.building = true;
       jenkinsApiResponse.result = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
@@ -167,6 +186,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal link for a pipeline', async () => {
+      sut._lastResult = null;
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
 
       sut.run().then((signal) => {
@@ -175,6 +195,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate signal for promise reject on get job status', async () => {
+      sut._lastResult = null;
       const error = new Error('99 problems and this error is one of them');
       fakeRequest.get = function tGet() { return buildResponsePromise(null, error); };
 
@@ -184,6 +205,7 @@ describe('JenkinsPipelineChecker', () => {
     });
 
     it('should return the appropriate null for promise reject on get job status related to networking issues', async () => {
+      sut._lastResult = null;
       const error = new Error('getaddrinfo');
       fakeRequest.get = function tGet() { return buildResponsePromise(null, error); };
 

@@ -9,6 +9,9 @@ const { logger } = q;
 class JenkinsPipelineChecker extends q.DesktopApp {
   constructor(requestParam = request) {
     super();
+
+    this._lastResult = null;
+
     this.pollingInterval = 3000;
     this.request = requestParam;
 
@@ -56,7 +59,7 @@ class JenkinsPipelineChecker extends q.DesktopApp {
       json: true,
     }).then((body) => {
       const lastBuild = new LastBuild(body);
-      return this.getSignal(lastBuild);
+      return this.hasResultChanged(lastBuild) ? this.getSignal(lastBuild) : null;
     }).catch((error) => {
       logger.error(`Error while getting job status. ${error.message}`);
 
@@ -149,6 +152,15 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     return signal;
   }
 
+  hasResultChanged(lastBuild) {
+    let changed = false;
+    const currentStatus = JenkinsPipelineChecker.convertToStatus(lastBuild);
+    if (currentStatus !== this._lastResult) {
+      this._lastResult = currentStatus;
+      changed = true;
+    }
+    return changed;
+  }
 
   static convertToStatus(lastBuild) {
     let lastBuildStatus = lastBuild.result;
