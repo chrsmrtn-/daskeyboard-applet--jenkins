@@ -180,7 +180,7 @@ class JenkinsPipelineChecker extends q.DesktopApp {
   }
 
   parseApiKeyValue(apiKey) {
-    if (apiKey === undefined) {
+    if (apiKey === undefined || apiKey === '') {
       return;
     }
 
