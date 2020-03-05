@@ -41,11 +41,9 @@ class JenkinsPipelineChecker extends q.DesktopApp {
       ABORTED: this.config.abortedEffect,
     };
 
-    try {
-      this.parseApiKeyValue(this.authorization.apiKey);
-    } catch (ex) {
-      logger.error(ex.message);
-    }
+    this.parseApiKeyValue(this.authorization.apiKey);
+
+    return true;
   }
 
   async run() {
