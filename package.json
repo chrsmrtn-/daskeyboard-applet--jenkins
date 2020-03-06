@@ -1,7 +1,7 @@
 {
   "name": "daskeyboard-applet--jenkins",
   "displayName": "Jenkins Pipeline",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Displays status of Jenkins pipeline.",
   "longDescription": "Monitor the status of your Jenkins pipeline on your Q keyboard!",
   "officialProductName": "Jenkins Pipeline",
@@ -53,7 +53,7 @@
     },
     "authorization": {
       "type": "apiKey",
-      "hint": "https://username:token@jenkins.company.com to connect to jenkins server"
+      "hint": "https://username:token@jenkins.company.com to connect to Jenkins server"
     },
     "questions": [
       {
@@ -69,7 +69,7 @@
       {
         "key": "successColor",
         "label": "Choose color for SUCCESS",
-        "help": "Color when build was successful",
+        "help": "Color when pipeline was successful",
         "order": 2,
         "value": "#00FF00",
         "controlType": "color"
@@ -77,7 +77,7 @@
       {
         "key": "successEffect",
         "label": "Choose a SUCCESS effect",
-        "help": "Effect when build was successful",
+        "help": "Effect when pipeline was successful",
         "order": 3,
         "value": "SET_COLOR",
         "controlType": "effect"
@@ -85,7 +85,7 @@
       {
         "key": "failureColor",
         "label": "Choose a FAILURE, UNSTABLE, and NOT BUILT color",
-        "help": "Color when build was a failure, unstable or not built",
+        "help": "Color when pipeline was a failure, unstable or not built",
         "order": 4,
         "value": "#FF0000",
         "controlType": "color"
@@ -93,7 +93,7 @@
       {
         "key": "failureEffect",
         "label": "Choose a FAILURE, UNSTABLE, and NOT BUILT effect",
-        "help": "Effect when build was a failure, unstable or not built",
+        "help": "Effect when pipeline was a failure, unstable or not built",
         "order": 5,
         "value": "BLINK",
         "controlType": "effect"
