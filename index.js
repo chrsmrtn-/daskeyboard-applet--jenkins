@@ -18,6 +18,8 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     this.MessagesForBuild = {
       SUCCESS: ' passed!',
       FAILURE: ' failed!',
+      UNSTABLE: ' is unstable.',
+      NOT_BUILT: ' was not built',
       BUILDING: ' building...',
       ABORTED: ' aborted.',
     };
@@ -27,6 +29,8 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     this.ColorsForBuild = {
       SUCCESS: this.config.successColor,
       FAILURE: this.config.failureColor,
+      UNSTABLE: this.config.failureColor,
+      NOT_BUILT: this.config.failureColor,
       BUILDING: this.config.buildingColor,
       ABORTED: this.config.abortedColor,
     };
@@ -34,6 +38,8 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     this.EffectsForBuild = {
       SUCCESS: this.config.successEffect,
       FAILURE: this.config.failureEffect,
+      UNSTABLE: this.config.failureEffect,
+      NOT_BUILT: this.config.failureEffect,
       BUILDING: this.config.buildingEffect,
       ABORTED: this.config.abortedEffect,
     };
@@ -89,50 +95,13 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     return [];
   }
 
-  getColor(lastBuild) {
-    let color;
-    const lastBuildStatus = JenkinsPipelineChecker.convertToStatus(lastBuild);
-
-    if (Object.keys(this.ColorsForBuild).includes(lastBuildStatus)) {
-      color = this.ColorsForBuild[lastBuildStatus];
-    } else {
-      color = `Build state of ${lastBuild.result} not recognized`;
-    }
-
-    return color;
-  }
-
-  getEffect(lastBuild) {
-    let effect;
-    const lastBuildStatus = JenkinsPipelineChecker.convertToStatus(lastBuild);
-
-    if (Object.keys(this.EffectsForBuild).includes(lastBuildStatus)) {
-      effect = this.EffectsForBuild[lastBuildStatus];
-    } else {
-      effect = `Build state of ${lastBuild.result} not recognized`;
-    }
-
-    return effect;
-  }
-
-  getStatusMessage(lastBuild) {
-    let status;
-    const lastBuildStatus = JenkinsPipelineChecker.convertToStatus(lastBuild);
-
-    if (Object.keys(this.MessagesForBuild).includes(lastBuildStatus)) {
-      status = this.MessagesForBuild[lastBuildStatus];
-    } else {
-      status = `Build state of ${lastBuild.result} not recognized`;
-    }
-
-    return status;
-  }
-
   getSignal(lastBuild) {
-    const color = this.getColor(lastBuild, this.config);
-    const effect = this.getEffect(lastBuild, this.config);
+    const buildStatus = JenkinsPipelineChecker.convertToStatus(lastBuild);
+
+    const color = this.ColorsForBuild[buildStatus];
+    const effect = this.EffectsForBuild[buildStatus];
     let message = this.config.pipeline;
-    message += this.getStatusMessage(lastBuild);
+    message += this.MessagesForBuild[buildStatus];
 
     const signal = new q.Signal({
       points: [[new q.Point(color, effect)]],

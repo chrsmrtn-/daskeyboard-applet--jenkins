@@ -123,7 +123,69 @@ describe('JenkinsPipelineChecker', () => {
       assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
     });
 
-    it('should return the appropriate signal color for a aborted pipeline', async () => {
+    it('should return the appropriate signal color for an unstable pipeline', async () => {
+      sut._lastResult = null;
+      jenkinsApiResponse.result = 'UNSTABLE';
+      fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
+
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].color, testConfiguration.applet.user.failureColor, 'Did not get the expected failure color.');
+    });
+
+    it('should return the appropriate signal effect for an unstable pipeline', async () => {
+      sut._lastResult = null;
+      jenkinsApiResponse.result = 'UNSTABLE';
+      fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
+
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.failureEffect, 'Did not get the expected failure effect.');
+    });
+
+    it('should return the appropriate signal message for an unstable pipeline', async () => {
+      sut._lastResult = null;
+      jenkinsApiResponse.result = 'UNSTABLE';
+      fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
+
+      const signal = await sut.run();
+
+      assert.ok(signal.message.includes('unstable'), 'Message did not indicate if the pipeline failed');
+      assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
+    });
+
+    it('should return the appropriate signal color for an unbuilt pipeline', async () => {
+      sut._lastResult = null;
+      jenkinsApiResponse.result = 'NOT_BUILT';
+      fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
+
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].color, testConfiguration.applet.user.failureColor, 'Did not get the expected failure color.');
+    });
+
+    it('should return the appropriate signal effect for an unbuilt pipeline', async () => {
+      sut._lastResult = null;
+      jenkinsApiResponse.result = 'NOT_BUILT';
+      fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
+
+      const signal = await sut.run();
+
+      assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.failureEffect, 'Did not get the expected failure effect.');
+    });
+
+    it('should return the appropriate signal message for an unbuilt pipeline', async () => {
+      sut._lastResult = null;
+      jenkinsApiResponse.result = 'NOT_BUILT';
+      fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
+
+      const signal = await sut.run();
+
+      assert.ok(signal.message.includes('not built'), 'Message did not indicate if the pipeline failed');
+      assert.ok(signal.message.includes(testConfiguration.applet.user.pipeline), 'Message did not include pipeline name.');
+    });
+
+    it('should return the appropriate signal color for an aborted pipeline', async () => {
       sut._lastResult = null;
       jenkinsApiResponse.result = 'ABORTED';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
@@ -133,7 +195,7 @@ describe('JenkinsPipelineChecker', () => {
       assert.equal(signal.points[0][0].color, testConfiguration.applet.user.abortedColor, 'Did not get the expected aborted color.');
     });
 
-    it('should return the appropriate signal effect for a aborted pipeline', async () => {
+    it('should return the appropriate signal effect for an aborted pipeline', async () => {
       sut._lastResult = null;
       jenkinsApiResponse.result = 'ABORTED';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
@@ -143,7 +205,7 @@ describe('JenkinsPipelineChecker', () => {
       assert.equal(signal.points[0][0].effect, testConfiguration.applet.user.abortedEffect, 'Did not get the expected aborted effect.');
     });
 
-    it('should return the appropriate signal message for a aborted pipeline', async () => {
+    it('should return the appropriate signal message for an aborted pipeline', async () => {
       sut._lastResult = null;
       jenkinsApiResponse.result = 'ABORTED';
       fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
