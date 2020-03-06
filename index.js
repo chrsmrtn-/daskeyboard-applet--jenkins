@@ -15,9 +15,6 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     this.pollingInterval = 3000;
     this.request = requestParam;
 
-    this.jenkinsUrl = undefined;
-    this.userToken = undefined;
-
     this.MessagesForBuild = {
       SUCCESS: ' passed!',
       FAILURE: ' failed!',
