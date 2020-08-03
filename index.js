@@ -12,7 +12,7 @@ class JenkinsPipelineChecker extends q.DesktopApp {
 
     this._lastResult = null;                        // last recorded build result for the pipeline
 
-    this.pollingIntervalInMilliseconds = 3000;      // frequency that we poll the jenkins server for updates
+    this.pollingInterval = 3000;      // frequency in milliseconds that Q Desktop App will run our app
     this.request = requestParam;
 
     // message to display in tooltip based on status
