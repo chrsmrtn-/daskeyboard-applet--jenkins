@@ -10,7 +10,7 @@ class JenkinsPipelineChecker extends q.DesktopApp {
   constructor(requestParam = request) {
     super();
 
-    this._lastResult = null;                        // last recorded build result for the pipeline
+    this._lastResult = null;          // last recorded build result for the pipeline
 
     this.pollingInterval = 3000;      // frequency in milliseconds that Q Desktop App will run our app
     this.request = requestParam;
