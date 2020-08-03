@@ -10,11 +10,12 @@ class JenkinsPipelineChecker extends q.DesktopApp {
   constructor(requestParam = request) {
     super();
 
-    this._lastResult = null;
+    this._lastResult = null;                        // last recorded build result for the pipeline
 
-    this.pollingInterval = 3000;
+    this.pollingIntervalInMilliseconds = 3000;      // frequency that we poll the jenkins server for updates
     this.request = requestParam;
 
+    // message to display in tooltip based on status
     this.MessagesForBuild = {
       SUCCESS: ' passed!',
       FAILURE: ' failed!',
@@ -25,6 +26,9 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     };
   }
 
+  /**
+   * apply configuration changes if triggered while editing configuration in Q Desktop App
+   */
   async applyConfig() {
     this.ColorsForBuild = {
       SUCCESS: this.config.successColor,
@@ -49,9 +53,13 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     return true;
   }
 
+  /**
+   * main entry that Q Desktop App will call at the defined interval
+   */
   async run() {
     const url = `${this.jenkinsUrl}/job/${this.config.pipeline}/lastBuild/api/json`;
 
+    // get and process build status of pipeline
     return this.request.get({
       url,
       headers: {
@@ -59,11 +67,14 @@ class JenkinsPipelineChecker extends q.DesktopApp {
       },
       json: true,
     }).then((body) => {
+      // we received a valid response, process it
       const lastBuild = new LastBuild(body);
       return this.hasResultChanged(lastBuild) ? this.getSignal(lastBuild) : null;
     }).catch((error) => {
+      // an error occured while getting pipeline status from jenkins
       logger.error(`Error while getting job status. ${error.message}`);
 
+      // if the error is networking related, ignore it
       if (`${error.message}`.includes('getaddrinfo')) {
         return null;
       }
@@ -76,17 +87,22 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     });
   }
 
+  /**
+   * called by Q Desktop App when the configuration page loads
+   * @param {string} fieldId - the id of the field on the configuration page
+   */
   async options(fieldId) {
     if (fieldId === 'pipeline') {
       const url = `${this.jenkinsUrl}/api/json`;
 
+      // get list of available pipeliens
       return this.request.get({
         url,
         headers: {
           Authorization: `Basic ${Buffer.from(`${this.userToken}`).toString('base64')}`,
         },
         json: true,
-      }).then((body) => JenkinsPipelineChecker.buildJobs(body.jobs)).catch((error) => {
+      }).then((body) => JenkinsPipelineChecker.buildAvailableJobsOptions(body.jobs)).catch((error) => {
         logger.error(`Caught error when loading jobs: ${error}`);
         return [];
       });
@@ -95,6 +111,10 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     return [];
   }
 
+  /**
+   * process build status result and create appropriate signal
+   * @param {LastBuild} lastBuild - last build result for pipeline
+   */
   getSignal(lastBuild) {
     const buildStatus = JenkinsPipelineChecker.convertToStatus(lastBuild);
 
@@ -116,6 +136,10 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     return signal;
   }
 
+  /**
+   * checks if the build status has changed since last check
+   * @param {LastBuild} lastBuild - last build result for pipeline
+   */
   hasResultChanged(lastBuild) {
     let changed = false;
     const currentStatus = JenkinsPipelineChecker.convertToStatus(lastBuild);
@@ -126,15 +150,24 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     return changed;
   }
 
+  /**
+   * converts the status that we got from jenkins to a status we understand
+   * @param {LastBuild} lastBuild 
+   */
   static convertToStatus(lastBuild) {
     let lastBuildStatus = lastBuild.result;
+    // building status doesn't exist in Jenkins, so check boolean if the pipeline is building
     if (lastBuild.building) {
       lastBuildStatus = 'BUILDING';
     }
     return lastBuildStatus;
   }
 
-  static buildJobs(jobs) {
+  /**
+   * creates options for configuration page based on list of  pipelines on the jenkins server
+   * @param {*} jobs - array of pipelines returned from the jenkins server
+   */
+  static buildAvailableJobsForSelection(jobs) {
     const options = [];
     jobs.forEach((job) => {
       options.push({
@@ -145,6 +178,10 @@ class JenkinsPipelineChecker extends q.DesktopApp {
     return options;
   }
 
+  /**
+   * parses provided Api key to it's parts
+   * @param {string} apiKey 
+   */
   parseApiKeyValue(apiKey) {
     if (apiKey === undefined || apiKey === '') {
       return;
