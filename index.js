@@ -10,9 +10,9 @@ class JenkinsPipelineChecker extends q.DesktopApp {
   constructor(requestParam = request) {
     super();
 
-    this._lastResult = null;          // last recorded build result for the pipeline
+    this._lastResult = null; // last recorded build result for the pipeline
 
-    this.pollingInterval = 3000;      // frequency in milliseconds that Q Desktop App will run our app
+    this.pollingInterval = 3000; // frequency in milliseconds that Q Desktop App will run our app
     this.request = requestParam;
 
     // message to display in tooltip based on status
@@ -102,10 +102,11 @@ class JenkinsPipelineChecker extends q.DesktopApp {
           Authorization: `Basic ${Buffer.from(`${this.userToken}`).toString('base64')}`,
         },
         json: true,
-      }).then((body) => JenkinsPipelineChecker.buildAvailableJobsForSelection(body.jobs)).catch((error) => {
-        logger.error(`Caught error when loading jobs: ${error}`);
-        return [];
-      });
+      }).then((body) => JenkinsPipelineChecker.buildAvailableJobsForSelection(body.jobs))
+        .catch((error) => {
+          logger.error(`Caught error when loading jobs: ${error}`);
+          return [];
+        });
     }
 
     return [];
@@ -152,7 +153,7 @@ class JenkinsPipelineChecker extends q.DesktopApp {
 
   /**
    * converts the status that we got from jenkins to a status we understand
-   * @param {LastBuild} lastBuild 
+   * @param {LastBuild} lastBuild
    */
   static convertToStatus(lastBuild) {
     let lastBuildStatus = lastBuild.result;
@@ -180,7 +181,7 @@ class JenkinsPipelineChecker extends q.DesktopApp {
 
   /**
    * parses provided Api key to it's parts
-   * @param {string} apiKey 
+   * @param {string} apiKey
    */
   parseApiKeyValue(apiKey) {
     if (apiKey === undefined || apiKey === '') {
