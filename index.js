@@ -102,7 +102,7 @@ class JenkinsPipelineChecker extends q.DesktopApp {
           Authorization: `Basic ${Buffer.from(`${this.userToken}`).toString('base64')}`,
         },
         json: true,
-      }).then((body) => JenkinsPipelineChecker.buildAvailableJobsOptions(body.jobs)).catch((error) => {
+      }).then((body) => JenkinsPipelineChecker.buildAvailableJobsForSelection(body.jobs)).catch((error) => {
         logger.error(`Caught error when loading jobs: ${error}`);
         return [];
       });
