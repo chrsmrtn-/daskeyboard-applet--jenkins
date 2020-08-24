@@ -287,6 +287,39 @@ describe('JenkinsPipelineChecker', () => {
     });
   });
 
+  describe('the options() method', () => {
+    const jenkinsApiResponse = {
+      jobs: [
+        { name: 'job1' },
+        { name: 'job2' },
+      ],
+    };
+    let sut;
+    const fakeRequest = {
+      get: {},
+    };
+
+    before(() => {
+      sut = buildApp(fakeRequest);
+    });
+
+    it('should grab available pipeliens from jenkins', async () => {
+      fakeRequest.get = function tGet() { return buildResponsePromise(jenkinsApiResponse); };
+
+      const options = await sut.options('pipeline');
+
+      assert.equal(jenkinsApiResponse.jobs.length, options.length, 'number of options did not match response count from jenkins');
+
+      for (let i = 0; i < jenkinsApiResponse.jobs.length; i += 1) {
+        const responseValue = jenkinsApiResponse.jobs[i];
+        const matchingOption = options[i];
+
+        assert.equal(responseValue.name, matchingOption.key, 'key did not match pipeline name from jenkins');
+        assert.equal(responseValue.name, matchingOption.value, 'value did not match pipeline name from jenkins');
+      }
+    });
+  });
+
   describe('the parseApiKeyValue() method', () => {
     let sut;
     const fakeRequest = {
