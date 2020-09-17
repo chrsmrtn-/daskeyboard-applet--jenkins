@@ -1,7 +1,7 @@
 {
   "name": "daskeyboard-applet--jenkins",
   "displayName": "Jenkins Pipeline",
-  "version": "0.0.14",
+  "version": "1.0.0",
   "description": "Displays status of Jenkins pipeline.",
   "longDescription": "Monitor the status of your Jenkins pipeline on your Q keyboard!",
   "officialProductName": "Jenkins Pipeline",
@@ -53,7 +53,8 @@
     },
     "authorization": {
       "type": "apiKey",
-      "hint": "https://username:token@jenkins.company.com to connect to Jenkins server"
+      "hint": "https://username:token@jenkins.company.com to connect to Jenkins server",
+      "supportUrl": "https://www.jenkins.io/blog/2018/07/02/new-api-token-system"
     },
     "questions": [
       {
