@@ -1,5 +1,5 @@
-#### 0.0.14 (2020-09-17)
+# Changelog Q Applet Jenkins
 
-##### New Features
+## Version 1.0.0 September 17, 2020
 
-* **Applet configuration:**  Added jenkins api token documentation link to api key configuration
+First release
